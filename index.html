@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nike Chile · SNKRS Verificador de Sorteo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#111111; --white:#FFFFFF;
+  --accent:#FA5400; --danger:#D43F21;
+  --green:#1A8F47; --green-light:#E8F7EE;
+  --grey-100:#F5F5F5; --grey-200:#E5E5E5; --grey-300:#CCCCCC;
+  --grey-500:#757575; --grey-700:#444444;
+  --volt:#CDFC04;
+  --font-display:'Barlow Condensed','Arial Narrow',Helvetica,Arial,sans-serif;
+  --font-body:'Barlow',Helvetica,Arial,sans-serif;
+  --font-mono:'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace;
+  --radius:6px; --radius-sm:3px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{background:var(--white);color:var(--black);font-family:var(--font-body);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+h1,h2,h3,h4{margin:0;}
+button{font-family:inherit;}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+/* APPBAR */
+.appbar{position:sticky;top:0;z-index:50;background:var(--black);}
+.topbar{padding:0 24px;display:flex;align-items:center;gap:16px;height:56px;border-bottom:1px solid #2a2a2a;}
+.wordmark{font-family:var(--font-display);font-weight:900;letter-spacing:.12em;text-transform:uppercase;font-size:16px;color:var(--white);line-height:1;}
+.subtitle{font-family:var(--font-display);letter-spacing:.08em;text-transform:uppercase;font-size:11px;color:#888;line-height:1;margin-top:2px;}
+
+/* TABS */
+.tabs{display:flex;padding:0 24px;background:var(--black);border-bottom:1px solid #2a2a2a;overflow-x:auto;}
+.tab-btn{background:none;border:none;border-bottom:3px solid transparent;color:#888;font-family:var(--font-display);text-transform:uppercase;letter-spacing:.1em;font-size:12px;font-weight:700;padding:14px 16px 12px;cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s;margin-bottom:-1px;}
+.tab-btn:hover{color:var(--white);}
+.tab-btn.active{color:var(--white);border-bottom-color:var(--accent);}
+.tab-count{color:var(--accent);margin-left:4px;}
+
+main{max-width:1280px;margin:0 auto;padding:28px 24px 64px;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* PANEL */
+.panel{background:var(--white);border:1px solid var(--grey-200);border-radius:var(--radius);padding:24px 28px;margin-bottom:20px;}
+.panel-title{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.08em;font-size:17px;font-weight:800;margin:0 0 4px;}
+.panel-desc{color:var(--grey-700);font-size:13px;margin:0 0 18px;line-height:1.6;max-width:760px;}
+.panel-head-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;}
+.sub-title{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.07em;font-size:13px;font-weight:800;margin:22px 0 10px;display:flex;align-items:center;gap:8px;}
+.sub-title:first-child{margin-top:0;}
+
+/* BUTTONS */
+.btn{font-family:var(--font-body);font-weight:600;font-size:13px;padding:10px 18px;border-radius:30px;border:2px solid var(--grey-300);background:var(--white);color:var(--black);cursor:pointer;transition:.15s;letter-spacing:.02em;white-space:nowrap;}
+.btn:hover{border-color:var(--black);}
+.btn-primary{background:var(--black);color:var(--white);border:2px solid var(--black);font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:13px;}
+.btn-primary:hover{background:#333;border-color:#333;}
+.btn-green{background:var(--green);color:var(--white);border:2px solid var(--green);font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:13px;}
+.btn-green:hover{background:#156f38;border-color:#156f38;}
+.btn-ghost{background:transparent;border-color:var(--grey-300);}
+.btn-ghost:hover{border-color:var(--black);background:transparent;}
+.btn-danger{color:var(--danger);border-color:#ffd5cc;}
+.btn-danger:hover{border-color:var(--danger);background:#fff5f3;}
+.btn-sm{padding:6px 14px;font-size:12px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* INPUTS */
+input[type=text],input[type=url],select,textarea{background:var(--white);border:1.5px solid var(--grey-300);color:var(--black);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--font-body);font-size:13px;width:100%;transition:border-color .15s;}
+input:focus,select:focus,textarea:focus{border-color:var(--black);outline:none;}
+textarea{font-family:var(--font-mono);resize:vertical;}
+label.lbl{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--grey-500);margin-bottom:4px;font-family:var(--font-display);font-weight:700;}
+label.check{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--grey-700);cursor:pointer;}
+label.check input{accent-color:var(--black);}
+
+/* CHIPS */
+.chip-input-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;min-height:20px;}
+.chip{background:var(--black);color:var(--white);border-radius:20px;padding:6px 8px 6px 14px;display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12.5px;letter-spacing:.03em;}
+.chip button{background:rgba(255,255,255,.15);border:none;color:var(--white);width:18px;height:18px;border-radius:50%;cursor:pointer;font-size:11px;line-height:1;transition:.15s;}
+.chip button:hover{background:var(--accent);}
+
+/* DROPZONE */
+.dropzone{border:2px dashed var(--grey-300);border-radius:var(--radius);padding:28px;text-align:center;color:var(--grey-500);cursor:pointer;transition:.15s;background:var(--grey-100);}
+.dropzone:hover{border-color:var(--black);color:var(--black);background:var(--grey-200);}
+.dropzone.dragover{border-color:var(--accent);background:#fff5f0;color:var(--black);}
+.dropzone strong{color:var(--black);display:block;font-family:var(--font-display);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;font-size:15px;font-weight:800;}
+
+
+
+/* STATUS BANNER */
+.status-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px 16px;border-radius:var(--radius-sm);background:var(--grey-100);border:1px solid var(--grey-200);margin-bottom:16px;font-size:13px;}
+.status-bar.loading{background:#FFF8E7;border-color:#FFE082;}
+.status-bar.ok{background:var(--green-light);border-color:#b2dfcc;}
+.status-bar.error{background:#fff5f3;border-color:#ffd5cc;}
+
+/* TABLES */
+table.data{width:100%;border-collapse:collapse;font-size:13px;}
+table.data th{text-align:left;font-family:var(--font-display);text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;font-weight:800;color:var(--grey-500);padding:10px 12px;border-bottom:2px solid var(--black);white-space:nowrap;background:var(--white);}
+table.data td{padding:10px 12px;border-bottom:1px solid var(--grey-200);vertical-align:middle;}
+table.data tbody tr:hover{background:var(--grey-100);}
+table.data tr.row-reject td{background:#FFF5F3;}
+table.data tr.row-ok td{background:#F4FBF7;}
+.mono{font-family:var(--font-mono);font-size:12px;}
+.num{text-align:right;font-family:var(--font-mono);}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
+.pill-ok{background:var(--green-light);color:var(--green);border:1px solid #b2dfcc;}
+.pill-ban{background:#fff0f0;color:#c0392b;border:1px solid #f5c6c6;}
+.pill-dup{background:#FFF8E7;color:#7A5500;border:1px solid #FFE082;}
+.pill-term{background:#FFF0E8;color:#C05000;border:1px solid #ffd0b0;}
+.pill-volt{background:var(--volt);color:#222;}
+.pill-dim{background:var(--grey-100);color:var(--grey-700);border:1px solid var(--grey-200);}
+.pill-orange{background:var(--accent);color:var(--white);}
+.pill-info{background:#E8F4FF;color:#0066CC;border:1px solid #c3e0ff;}
+
+/* SUMMARY CARDS */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:24px;}
+.stat-card{border:1px solid var(--grey-200);border-radius:var(--radius);padding:16px 18px;}
+.stat-card .val{font-family:var(--font-display);font-size:36px;font-weight:900;line-height:1;margin-bottom:4px;}
+.stat-card .lbl{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.07em;font-size:11px;color:var(--grey-500);font-weight:700;}
+.stat-card.card-green .val{color:var(--green);}
+.stat-card.card-red .val{color:var(--danger);}
+.stat-card.card-orange .val{color:var(--accent);}
+.stat-card.card-yellow .val{color:#A06000;}
+
+/* SWITCH */
+.switch-row{display:inline-flex;align-items:center;gap:8px;font-size:13px;margin-right:20px;margin-bottom:8px;cursor:pointer;color:var(--grey-700);}
+.switch{position:relative;display:inline-block;width:38px;height:22px;flex:none;}
+.switch input{opacity:0;width:0;height:0;}
+.slider{position:absolute;inset:0;background:var(--grey-200);border-radius:22px;transition:.15s;cursor:pointer;}
+.slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:var(--white);border-radius:50%;transition:.15s;box-shadow:0 1px 3px rgba(0,0,0,.25);}
+.switch input:checked + .slider{background:var(--black);}
+.switch input:checked + .slider::before{transform:translateX(16px);}
+
+/* MAPPING GRID */
+.mapping-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;}
+.map-item label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--grey-500);margin-bottom:4px;font-family:var(--font-display);font-weight:700;}
+
+/* TOAST */
+#toast-wrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:999;max-width:340px;}
+.toast{background:var(--black);color:var(--white);border-left:4px solid var(--grey-500);padding:12px 16px;border-radius:var(--radius-sm);font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:toastin .15s ease;}
+.toast.success{border-left-color:var(--volt);}
+.toast.error{border-left-color:var(--danger);}
+@keyframes toastin{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;color:var(--grey-500);font-size:13px;}
+
+/* FILTERS ROW */
+.filters-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.filters-row input[type=text]{flex:2 1 220px;width:auto;}
+.filters-row select{flex:0 1 auto;width:auto;}
+
+/* BAN REASON */
+.ban-reason{font-size:11.5px;color:var(--danger);}
+.ban-field{font-weight:700;}
+
+/* PROGRESS */
+.progress-wrap{height:4px;background:var(--grey-200);border-radius:2px;overflow:hidden;margin:8px 0 0;}
+.progress-bar{height:100%;background:var(--accent);transition:width .3s;width:0;}
+
+/* CALLOUT */
+.callout{background:#FFF8E7;border:1px solid #FFE082;color:#5C4A00;padding:12px 16px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:14px;line-height:1.6;}
+.callout.callout-green{background:var(--green-light);border-color:#b2dfcc;color:#0D5C2D;}
+
+@media(max-width:720px){main{padding:16px;}. panel{padding:16px;}.topbar{padding:0 16px;}.tabs{padding:0 8px;}.tab-btn{padding:12px 10px;font-size:11px;}}
+</style>
+</head>
+<body>
+<div id="toast-wrap"></div>
+
+<header class="appbar">
+  <div class="topbar">
+    <div>
+      <div class="wordmark">Nike Chile · SNKRS</div>
+      <div class="subtitle">Verificador de Sorteo · Limpieza de Lista</div>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="terminos">1 · Términos</button>
+    <button class="tab-btn" data-tab="stock">2 · Stock</button>
+    <button class="tab-btn" data-tab="fuentes">3 · Fuentes de Datos</button>
+    <button class="tab-btn" data-tab="resumen">4 · Resumen<span class="tab-count" id="count-resumen"></span></button>
+    <button class="tab-btn" data-tab="aprobados">5 · Aprobados<span class="tab-count" id="count-aprobados"></span></button>
+    <button class="tab-btn" data-tab="rechazados">6 · Rechazados<span class="tab-count" id="count-rechazados"></span></button>
+    <button class="tab-btn" data-tab="ayuda">7 · Cómo funciona</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- TAB 1 · TÉRMINOS -->
+<section class="tab-panel active" data-tab="terminos">
+  <div class="panel">
+    <div class="panel-head-row">
+      <div>
+        <h2 class="panel-title">Lista de Términos Sospechosos</h2>
+        <p class="panel-desc">Emails exactos o fragmentos que identifican bots o revendedores. Se aplican sobre el email de cada participante del sorteo.</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-sm" data-action="terms-export">Exportar CSV</button>
+        <button class="btn btn-sm" data-action="terms-import-btn">Importar CSV</button>
+        <input type="file" id="terms-file-input" accept=".csv,.txt" style="display:none;">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+      <select id="term-type" style="width:auto;flex:none;">
+        <option value="email">Email exacto</option>
+        <option value="termino">Término (fragmento)</option>
+      </select>
+      <input type="text" id="term-value" placeholder="Ej: @mailnull.com  o  +reseller" style="flex:2;min-width:200px;width:auto;">
+      <input type="text" id="term-note" placeholder="Nota opcional" style="flex:1;min-width:140px;width:auto;">
+      <button class="btn btn-primary btn-sm" data-action="terms-add">Agregar</button>
+    </div>
+    <div id="terms-list"></div>
+  </div>
+</section>
+
+<!-- TAB 2 · STOCK -->
+<section class="tab-panel" data-tab="stock">
+  <div class="panel">
+    <div class="panel-head-row">
+      <div>
+        <h2 class="panel-title">Stock por talla</h2>
+        <p class="panel-desc">Ingresa el stock real por talla. La lista de aprobados final tendrá exactamente stock × 1,30 participantes. El 30% extra se distribuye automáticamente a las tallas con mayor stock. Puedes ingresar las tallas manualmente o subir un CSV.</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-sm" data-action="stock-export">Exportar CSV</button>
+        <button class="btn btn-sm" data-action="stock-import-btn">Importar CSV</button>
+        <input type="file" id="stock-file-input" accept=".csv,.txt" style="display:none;">
+      </div>
+    </div>
+    <div id="stock-rows" style="margin-bottom:16px;"></div>
+    <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px;">
+      <div>
+        <label class="lbl">Talla</label>
+        <input type="text" id="new-size-input" placeholder="Ej: 42  o  US 10" style="width:150px;">
+      </div>
+      <div>
+        <label class="lbl">Stock real</label>
+        <input type="number" id="new-stock-input" placeholder="0" min="0" style="width:100px;">
+      </div>
+      <button class="btn btn-primary btn-sm" data-action="stock-add">+ Agregar talla</button>
+    </div>
+    <p style="font-size:12px;color:var(--grey-500);margin:4px 0 0;">El CSV de stock debe tener columnas <code>talla</code> y <code>stock</code> (o <code>cantidad</code>). También acepta dos columnas sin encabezado.</p>
+    <div id="stock-total-bar" style="margin-top:16px;display:none;">
+      <div class="callout callout-green" id="stock-callout"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 3 · FUENTES DE DATOS -->
+<section class="tab-panel" data-tab="fuentes">
+  <div class="panel">
+    <h2 class="panel-title">Lista de Sorteo (participantes)</h2>
+    <p class="panel-desc">Exporta el sheet como CSV (Archivo → Descargar → CSV) y súbelo aquí.</p>
+    <div class="dropzone" id="sorteo-dropzone">
+      <strong>Arrastra el CSV del sorteo aquí</strong>
+      o haz click para elegir
+      <input type="file" id="sorteo-file" accept=".csv,.txt" style="display:none;">
+    </div>
+    <div id="sorteo-status" style="margin-top:12px;"></div>
+    <div id="sorteo-mapping-wrap" style="display:none;margin-top:18px;">
+      <h3 class="sub-title">Mapeo de columnas · Sorteo</h3>
+      <p class="panel-desc" style="margin-bottom:12px;">Verifica que cada campo apunte a la columna correcta. Los campos con * son obligatorios.</p>
+      <div id="sorteo-mapping-grid" class="mapping-grid"></div>
+      <button class="btn btn-primary" data-action="confirm-sorteo-mapping" style="margin-top:16px;">Confirmar columnas →</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2 class="panel-title">Base de Baneados</h2>
+    <p class="panel-desc">Exporta la hoja de baneados como CSV y súbela aquí. Se cruzará por RUT/DNI, email, teléfono y dirección.</p>
+    <div class="dropzone" id="ban-dropzone">
+      <strong>Arrastra el CSV de baneados aquí</strong>
+      o haz click para elegir
+      <input type="file" id="ban-file" accept=".csv,.txt" style="display:none;">
+    </div>
+    <div id="ban-status" style="margin-top:12px;"></div>
+    <div id="ban-mapping-wrap" style="display:none;margin-top:18px;">
+      <h3 class="sub-title">Mapeo de columnas · Baneados</h3>
+      <p class="panel-desc" style="margin-bottom:12px;">Confirma qué columna corresponde a cada campo.</p>
+      <div id="ban-mapping-grid" class="mapping-grid"></div>
+      <button class="btn btn-primary" data-action="confirm-ban-mapping" style="margin-top:16px;">Confirmar columnas →</button>
+    </div>
+  </div>
+
+  <div class="panel" id="signals-panel" style="display:none;">
+    <h2 class="panel-title">Señales de cruce</h2>
+    <p class="panel-desc">Activa o desactiva qué campos se usan para detectar duplicados y cruzar contra baneados.</p>
+    <div id="signals-row"></div>
+    <div style="margin-top:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <span style="font-size:13px;color:var(--grey-700);">En duplicados, mantener:</span>
+      <label class="check"><input type="radio" name="keep-pref" value="oldest" checked> Primera entrada recibida</label>
+      <label class="check"><input type="radio" name="keep-pref" value="newest"> Última entrada recibida</label>
+    </div>
+    <div style="margin-top:16px;">
+      <button class="btn btn-green" data-action="run-verification" id="run-btn" disabled>Verificar lista →</button>
+      <span id="run-hint" style="font-size:12px;color:var(--grey-500);margin-left:12px;">Confirma el mapeo de ambas fuentes para continuar</span>
+    </div>
+    <div class="progress-wrap" id="progress-wrap" style="display:none;"><div class="progress-bar" id="progress-bar"></div></div>
+  </div>
+</section>
+
+<!-- TAB 4 · RESUMEN -->
+<section class="tab-panel" data-tab="resumen">
+  <div id="resumen-content"><div class="empty">Carga las fuentes y ejecuta la verificación para ver el resumen.</div></div>
+</section>
+
+<!-- TAB 5 · APROBADOS -->
+<section class="tab-panel" data-tab="aprobados">
+  <div class="panel">
+    <div class="panel-head-row">
+      <div>
+        <h2 class="panel-title">Lista Aprobada para Compra</h2>
+        <p class="panel-desc">Lista aleatoria final. Si hay stock cargado, el total es exactamente stock × 1,30, con talla asignada a cada participante.</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-sm" data-action="aprobados-copy">Copiar emails</button>
+        <button class="btn btn-green btn-sm" data-action="aprobados-export">Exportar CSV</button>
+      </div>
+    </div>
+    <div class="filters-row" id="aprobados-filters"></div>
+    <div id="aprobados-content"><div class="empty">Ejecuta la verificación primero.</div></div>
+  </div>
+</section>
+
+<!-- TAB 6 · RECHAZADOS -->
+<section class="tab-panel" data-tab="rechazados">
+  <div class="panel">
+    <div class="panel-head-row">
+      <div>
+        <h2 class="panel-title">Lista Rechazada</h2>
+        <p class="panel-desc">Participantes eliminados: baneados, duplicados, sospechosos por términos, y excedente de stock.</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-sm" data-action="rechazados-export">Exportar CSV</button>
+      </div>
+    </div>
+    <div class="filters-row" id="rechazados-filters"></div>
+    <div id="rechazados-content"><div class="empty">Ejecuta la verificación primero.</div></div>
+  </div>
+</section>
+
+<!-- TAB 7 · CÓMO FUNCIONA -->
+<section class="tab-panel" data-tab="ayuda">
+  <div class="panel">
+    <h2 class="panel-title">Cómo funciona la verificación</h2>
+    <p class="panel-desc">La herramienta aplica las siguientes condiciones en orden. Un participante puede ser rechazado por más de una razón.</p>
+
+    <h3 class="sub-title">⛔ 1 · Baneados</h3>
+    <p style="font-size:13px;color:var(--grey-700);line-height:1.8;margin:0 0 8px;">Cada participante se cruza contra la base de baneados por cada señal activa:</p>
+    <table class="data" style="margin-bottom:20px;">
+      <thead><tr><th>Campo</th><th>Normalización</th><th>Resultado</th></tr></thead>
+      <tbody>
+        <tr><td><strong>RUT/DNI</strong></td><td>Minúsculas · sin puntos, guiones, espacios · sin K final</td><td rowspan="4" style="vertical-align:middle;"><span class="pill pill-ban">⛔ Rechazado</span><br><small style="color:var(--grey-500);">Todos los que coincidan.<br>No se conserva ninguno.</small></td></tr>
+        <tr><td><strong>Email</strong></td><td>Minúsculas · sin espacios</td></tr>
+        <tr><td><strong>Teléfono</strong></td><td>Solo dígitos · últimos 9 (ignora código de país)</td></tr>
+        <tr><td><strong>Dirección</strong></td><td>Sin tildes · sin números · sin puntuación · calle base + depto</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub-title">🚩 2 · Términos sospechosos</h3>
+    <table class="data" style="margin-bottom:20px;">
+      <thead><tr><th>Tipo</th><th>Cómo coincide</th><th>Ejemplo</th><th>Resultado</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill pill-info">Email exacto</span></td><td>Coincidencia exacta normalizada</td><td class="mono">malo@spam.com</td><td rowspan="2" style="vertical-align:middle;"><span class="pill pill-term">🚩 Rechazado</span><br><small style="color:var(--grey-500);">Todos. Sin conservar ninguno.</small></td></tr>
+        <tr><td><span class="pill pill-dim">Término</span></td><td>El email contiene el fragmento</td><td class="mono">@tempmail.org</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub-title">🔁 3 · Duplicados internos</h3>
+    <p style="font-size:13px;color:var(--grey-700);line-height:1.8;margin:0 0 8px;">Se agrupa por señales activas (Union-Find). Si comparten valor en cualquier señal → duplicados.</p>
+    <table class="data" style="margin-bottom:12px;">
+      <thead><tr><th>Señal</th><th>Normalización</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Documento</strong></td><td>Mismo RUT/DNI normalizado</td></tr>
+        <tr><td><strong>Email</strong></td><td>Mismo email normalizado</td></tr>
+        <tr><td><strong>Teléfono</strong></td><td>Mismos últimos 9 dígitos</td></tr>
+        <tr><td><strong>Dirección</strong></td><td>Misma calle base normalizada</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-green" style="margin-bottom:20px;">✅ De cada grupo se conserva una entrada. <strong>Prioridad:</strong> si uno tiene talla declarada y otro no, se conserva el que tiene talla. Luego aplica el criterio primera/última entrada.</div>
+
+    <h3 class="sub-title">📐 4 · Talla del participante</h3>
+    <table class="data" style="margin-bottom:20px;">
+      <thead><tr><th>Caso</th><th>Comportamiento</th></tr></thead>
+      <tbody>
+        <tr><td>Declara una talla (ej. <span class="mono">9.5</span> o <span class="mono">9,5</span>)</td><td>Se normaliza: coma decimal → punto. Resultado: <span class="mono">9.5</span></td></tr>
+        <tr><td>Lleva prefijo/sufijo de sistema (ej. <span class="mono">US 10</span>, <span class="mono">42 EU</span>)</td><td>Se ignora el indicador — se extrae solo el número: <span class="mono">10</span> / <span class="mono">42</span></td></tr>
+        <tr><td>Declara dos tallas (ej. <span class="mono">9.5 / 10</span>)</td><td>Se toma únicamente la primera: <span class="mono">9.5</span></td></tr>
+        <tr><td><strong>Sin talla declarada</strong></td><td>Se incluye en el total (stock × 1,30) igualmente. Se le asigna una talla al azar del pool disponible. Se marca con <span class="pill pill-dim">azar</span> en la lista de aprobados.</td></tr>
+        <tr><td>Duplicado con y sin talla</td><td>Se conserva el registro que tiene talla declarada</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub-title">📦 5 · Stock y asignación final</h3>
+    <table class="data" style="margin-bottom:12px;">
+      <thead><tr><th>Regla</th><th>Detalle</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Cupos totales</strong></td><td>Stock real × 1,30 (redondeado). La lista de aprobados tiene exactamente ese número de participantes.</td></tr>
+        <tr><td><strong>30% extra</strong></td><td>Se distribuye automáticamente entre las tallas con mayor stock, de mayor a menor, hasta agotar los cupos extra.</td></tr>
+        <tr><td><strong>Prioridad con talla declarada</strong></td><td>Los participantes con talla declarada se asignan primero a su propia talla (si hay cupo).</td></tr>
+        <tr><td><strong>Sin talla o talla agotada</strong></td><td>Se asigna la siguiente talla disponible del pool aleatorio.</td></tr>
+        <tr><td><strong>Excedente de participantes</strong></td><td>Si hay más aprobados que cupos × 1,30, los sobrantes pasan a Rechazados con motivo "Excede stock".</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-green" style="margin-bottom:0;">✅ El orden de la lista final es siempre aleatorio. El botón ↺ Reordenar genera un nuevo orden. El CSV exportado refleja exactamente el orden visible en pantalla.</div>
+  </div>
+
+  <div class="panel">
+    <h2 class="panel-title">Notas importantes</h2>
+    <p style="font-size:13px;color:var(--grey-700);line-height:1.9;margin:0;">
+      · Las condiciones son <strong>independientes y acumulables</strong> — un participante puede ser rechazado por más de un motivo.<br>
+      · Los datos se procesan <strong>100% localmente</strong> en tu navegador, no se envían a ningún servidor.<br>
+      · La lista de términos y el stock se guardan en este navegador. Usa <strong>Exportar CSV</strong> para compartirlos.<br>
+      · Para re-verificar, vuelve a la pestaña <strong>3 · Fuentes de Datos</strong> y presiona "Verificar lista →" nuevamente.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer style="max-width:1280px;margin:0 auto;padding:20px 24px 40px;color:var(--grey-500);font-size:11px;text-align:center;border-top:1px solid var(--grey-200);">
+  Nike Chile · SNKRS Verificador de Sorteo &nbsp;·&nbsp; Datos procesados localmente en tu navegador
+</footer>
+
+<script>
+const $ = s => document.querySelector(s);
+const $all = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function csvCell(v){const s=String(v??'');return s.includes(',')||s.includes('"')||s.includes('\n')?'"'+s.replace(/"/g,'""')+'"':s;}
+function toCsvStr(headers,rows){return [headers,...rows].map(r=>r.map(csvCell).join(',')).join('\r\n');}
+
+function toast(msg,type='info'){
+  const el=document.createElement('div');
+  el.className='toast'+(type==='success'?' success':type==='error'?' error':'');
+  el.textContent=msg;
+  $('#toast-wrap').appendChild(el);
+  setTimeout(()=>el.remove(),3800);
+}
+function downloadText(name,text){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));
+  a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+function setProgress(pct){const b=$('#progress-bar');if(b)b.style.width=pct+'%';}
+
+/* ── CSV PARSER ── */
+function detectDelimiter(s){return(s.match(/;/g)||[]).length>(s.match(/,/g)||[]).length?';':',';}
+function parseCsv(text){
+  const delim=detectDelimiter(text.slice(0,2000));
+  const rows=[];let cur=[],field='',inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i],nc=text[i+1];
+    if(inQ){if(c==='"'&&nc==='"'){field+='"';i++;}else if(c==='"'){inQ=false;}else{field+=c;}}
+    else{
+      if(c==='"'){inQ=true;}
+      else if(c===delim){cur.push(field);field='';}
+      else if(c==='\r'&&nc==='\n'){cur.push(field);field='';rows.push(cur);cur=[];i++;}
+      else if(c==='\n'||c==='\r'){cur.push(field);field='';rows.push(cur);cur=[];}
+      else{field+=c;}
+    }
+  }
+  if(field||cur.length){cur.push(field);rows.push(cur);}
+  return rows.filter(r=>r.some(c=>c.trim()));
+}
+function rowsToObjects(rows){
+  if(!rows.length)return[];
+  const h=rows[0].map(x=>x.trim());
+  return rows.slice(1).map(r=>{const o={};h.forEach((k,i)=>o[k]=(r[i]??'').trim());return o;});
+}
+
+/* ── NORMALIZERS ── */
+function normDoc(s){return String(s??'').toLowerCase().replace(/[\s.\-_]/g,'').replace(/k$/,'');}
+function normEmail(s){return String(s??'').toLowerCase().trim();}
+function normPhone(s){const d=String(s??'').replace(/\D/g,'');return d.length>=9?d.slice(-9):d;}
+function normAddress(street,number){
+  let s=String(street??'').toLowerCase()
+    .replace(/[áàä]/g,'a').replace(/[éèê]/g,'e').replace(/[íìï]/g,'i')
+    .replace(/[óòö]/g,'o').replace(/[úùü]/g,'u').replace(/ñ/g,'n')
+    .replace(/[.,#°\-]/g,' ').replace(/\s+/g,' ').trim()
+    .replace(/\b\d+\b/g,'').replace(/\s+/g,' ').trim();
+  const n=String(number??'').replace(/\D/g,'');
+  return(s+' '+n).trim();
+}
+
+/* ── TALLA NORMALIZATION ──
+   Rules:
+   1. Take only first talla if multiple: "9.5 / 10" → "9.5"
+   2. Strip letter prefixes/suffixes: "US 10" → "10", "10 US" → "10", "EU42" → "42"
+   3. Normalize decimal: "9,5" → "9.5"
+   4. Empty or letters-only → '' (no talla declared)
+*/
+function normSizeDisplay(raw){
+  if(!raw||!raw.trim()) return '';
+  // comma-decimal: "9,5" → "9.5"
+  let s=raw.trim().replace(/(\d),(\d)/g,'$1.$2');
+  // take first segment if multiple sizes separated by / , ; or space before digit
+  s=s.split(/\s*[\/,;]\s*|\s+(?=\d)/)[0].trim();
+  // strip letter prefix (US, EU, UK, BR, CM, etc.) + optional space before number
+  s=s.replace(/^[a-zA-Z]+\s*/,'');
+  // strip letter suffix after number (e.g. "10US", "42EU")
+  s=s.replace(/\s*[a-zA-Z]+$/,'').trim();
+  // if nothing numeric remains, return ''
+  if(!/\d/.test(s)) return '';
+  return s;
+}
+function normSizeKey(s){
+  return normSizeDisplay(s).toLowerCase().replace(/\s/g,'');
+}
+
+/* ── AUTO MAPPING ── */
+const SORTEO_FIELDS=[
+  {key:'firstName',label:'Nombre',       required:false,hints:['nombre','name','first','cliente']},
+  {key:'lastName', label:'Apellido',      required:false,hints:['apellido','last']},
+  {key:'document', label:'RUT/DNI *',     required:true, hints:['rut','dni','document','documento','cedula','id']},
+  {key:'email',    label:'Email *',       required:true, hints:['email','correo','mail']},
+  {key:'phone',    label:'Teléfono *',    required:true, hints:['phone','telefono','fono','celular','movil']},
+  {key:'street',   label:'Calle *',       required:true, hints:['calle','street','direccion','address','domicilio']},
+  {key:'number',   label:'Número/Depto',  required:false,hints:['number','numero','depto']},
+  {key:'size',     label:'Talla',         required:false,hints:['talla','size']},
+  {key:'styleColor',label:'StyleColor',  required:false,hints:['stylecolor','style','sku','producto']},
+  {key:'timestamp',label:'Fecha y hora', required:false,hints:['fecha','timestamp','date','hora','time','creado','created','ingreso','registro']},
+];
+const BAN_FIELDS=[
+  {key:'document', label:'RUT/DNI *',     required:true, hints:['rut','dni','document','documento','cedula','id']},
+  {key:'email',    label:'Email *',       required:true, hints:['email','correo','mail']},
+  {key:'phone',    label:'Teléfono',      required:false,hints:['phone','telefono','fono','celular']},
+  {key:'street',   label:'Calle',         required:false,hints:['calle','street','direccion','address']},
+  {key:'number',   label:'Número',        required:false,hints:['number','numero']},
+  {key:'firstName',label:'Nombre',        required:false,hints:['nombre','name','first']},
+  {key:'lastName', label:'Apellido',      required:false,hints:['apellido','last']},
+  {key:'reason',   label:'Motivo ban',    required:false,hints:['motivo','reason','ban','razon']},
+];
+function normHdr(h){return h.toLowerCase().replace(/[áàä]/g,'a').replace(/[éèê]/g,'e').replace(/[íìï]/g,'i').replace(/[óòö]/g,'o').replace(/[úùü]/g,'u').replace(/ñ/g,'n').replace(/[^a-z0-9]/g,' ').trim();}
+function autoMap(headers,fields){
+  const normed=headers.map(normHdr);const mapping={};
+  for(const fd of fields){
+    let best=-1,score=0;
+    normed.forEach((nh,i)=>{const s=fd.hints.reduce((a,h)=>a+(nh.includes(h)?h.length:0),0);if(s>score){score=s;best=i;}});
+    mapping[fd.key]=best>=0?headers[best]:'';
+  }
+  return mapping;
+}
+function renderMappingGrid(containerId,headers,fields,mappingObj){
+  $(containerId).innerHTML=fields.map(fd=>`<div class="map-item"><label>${esc(fd.label)}</label><select data-mapkey="${esc(fd.key)}"><option value="">— sin columna —</option>${headers.map(h=>`<option value="${esc(h)}" ${mappingObj[fd.key]===h?'selected':''}>${esc(h)}</option>`).join('')}</select></div>`).join('');
+}
+function readMapping(wrapSel){const m={};$all(wrapSel+' [data-mapkey]').forEach(s=>m[s.dataset.mapkey]=s.value);return m;}
+
+/* ── UNION-FIND ── */
+class UF{
+  constructor(){this.p={};}
+  find(x){this.p[x]=this.p[x]===undefined?x:(this.p[x]===x?x:this.find(this.p[x]));return this.p[x];}
+  union(a,b){const ra=this.find(a),rb=this.find(b);if(ra!==rb)this.p[ra]=rb;}
+}
+
+/* ── SIGNALS ── */
+const SIGNAL_DEFS=[
+  {key:'doc',  label:'Documento', fn:(r)=>{const v=normDoc(r.document);  return v.length>=4?v:null;}},
+  {key:'email',label:'Email',     fn:(r)=>{const v=normEmail(r.email);   return v||null;}},
+  {key:'phone',label:'Teléfono',  fn:(r)=>{const v=normPhone(r.phone);   return v.length>=6?v:null;}},
+  {key:'addr', label:'Dirección', fn:(r)=>{const v=normAddress(r.street,r.number);return v.length>=4?v:null;}},
+];
+function matchTerms(email,bl){
+  const ne=normEmail(email);
+  return bl.filter(t=>t.type==='email'?normEmail(t.value)===ne:ne.includes(t.value.toLowerCase()));
+}
+
+/* ── STATE ── */
+const state={
+  sorteoRaw:[],sorteoHeaders:[],sorteoMapping:{},sorteoReady:false,
+  banRaw:[],banHeaders:[],banMapping:{},banReady:false,
+  enabledSigs:new Set(['doc','email','phone','addr']),
+  keepPref:'oldest',
+  blocklist:[],
+  stockSizes:[], // [{size:string, qty:number}]
+  _sizesWithNoRequests:[], _slotStats:[],
+  results:null,  // {approved, rejected} — after cap applied
+  shuffledApproved:[],
+};
+function loadBL(){try{state.blocklist=JSON.parse(localStorage.getItem('hh_sorteo_bl')||'[]');}catch(e){state.blocklist=[];}}
+function saveBL(){try{localStorage.setItem('hh_sorteo_bl',JSON.stringify(state.blocklist));}catch(e){}}
+function loadStock(){try{const s=localStorage.getItem('hh_sorteo_stock');if(s)state.stockSizes=JSON.parse(s);}catch(e){}}
+function saveStock(){try{localStorage.setItem('hh_sorteo_stock',JSON.stringify(state.stockSizes));}catch(e){}}
+loadBL(); loadStock();
+
+function checkRunReady(){
+  const ready=state.sorteoReady&&state.banReady;
+  const btn=$('#run-btn');if(btn)btn.disabled=!ready;
+  const hint=$('#run-hint');if(hint)hint.textContent=ready?'Listo para verificar':'Confirma el mapeo de ambas fuentes para continuar';
+  const sp=$('#signals-panel');if(sp)sp.style.display=ready?'block':'none';
+}
+function showStatus(id,html,type='loading'){const el=$(id);if(!el)return;el.innerHTML=`<div class="status-bar ${type}">${html}</div>`;}
+
+/* ── SHUFFLE ── */
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+/* ══════════════════════════════════════════
+   STOCK
+══════════════════════════════════════════ */
+function stockTotal130(){return Math.round(state.stockSizes.reduce((a,s)=>a+s.qty,0)*1.3);}
+
+function renderStockRows(){
+  const el=$('#stock-rows');if(!el)return;
+  if(!state.stockSizes.length){
+    el.innerHTML='<p style="font-size:13px;color:var(--grey-500);">Sin tallas. Agrega manualmente o importa un CSV.</p>';
+    const bar=$('#stock-total-bar');if(bar)bar.style.display='none';
+    return;
+  }
+  const totalReal=state.stockSizes.reduce((a,s)=>a+s.qty,0);
+  const total130=Math.round(totalReal*1.3);
+  el.innerHTML=`<table class="data" style="max-width:480px;">
+    <thead><tr><th>Talla</th><th class="num">Stock real</th><th class="num">× 1,30</th><th></th></tr></thead>
+    <tbody>`+
+    state.stockSizes.map((s,i)=>`<tr>
+      <td class="mono">${esc(s.size)}</td>
+      <td class="num mono">${s.qty}</td>
+      <td class="num mono">${Math.round(s.qty*1.3)}</td>
+      <td style="text-align:right;"><button class="btn btn-ghost btn-danger btn-sm" data-action="stock-remove" data-si="${i}">×</button></td>
+    </tr>`).join('')+
+    `<tr style="border-top:2px solid var(--black);">
+      <td><strong>Total</strong></td>
+      <td class="num mono"><strong>${totalReal}</strong></td>
+      <td class="num mono"><strong>${total130}</strong></td>
+      <td></td>
+    </tr></tbody></table>`;
+  const bar=$('#stock-total-bar');
+  const callout=$('#stock-callout');
+  if(bar&&callout){
+    bar.style.display='block';
+    callout.textContent=`Stock real: ${totalReal} pares · Cupos totales (×1,30): ${total130} participantes`;
+  }
+}
+
+function handleStockCsv(text,filename){
+  const rows=parseCsv(text);
+  if(!rows.length){toast('CSV vacío.','error');return;}
+  const hdrs=rows[0].map(h=>h.trim().toLowerCase());
+  const idxTalla=hdrs.findIndex(h=>h.includes('talla')||h.includes('size')||h.includes('numero')||h.includes('número'));
+  const idxQty=hdrs.findIndex(h=>h.includes('stock')||h.includes('qty')||h.includes('cantidad')||h.includes('cant'));
+  const hasHeaders=idxTalla>=0||idxQty>=0;
+  const dataRows=hasHeaders?rows.slice(1):rows;
+  const colTalla=hasHeaders?(idxTalla>=0?idxTalla:0):0;
+  const colQty=hasHeaders?(idxQty>=0?idxQty:1):1;
+  let added=0,skipped=0;
+  for(const row of dataRows){
+    const rawSize=(row[colTalla]||'').trim();
+    const rawQty=(row[colQty]||'').trim();
+    if(!rawSize)continue;
+    const size=normSizeDisplay(rawSize)||rawSize;
+    const qty=parseInt(rawQty.replace(/[^\d]/g,''))||0;
+    if(!qty){skipped++;continue;}
+    // Merge if size already exists (same normalized key)
+    const existing=state.stockSizes.find(s=>normSizeKey(s.size)===normSizeKey(size));
+    if(existing){existing.qty+=qty;}
+    else{state.stockSizes.push({size,qty});}
+    added++;
+  }
+  saveStock(); renderStockRows();
+  toast(`${added} talla(s) importada(s)${skipped?' · '+skipped+' omitida(s) sin qty':''}${filename?' — '+filename:''}.`,'success');
+}
+
+/* ══════════════════════════════════════════
+   LOAD HANDLERS
+══════════════════════════════════════════ */
+function handleSorteoCsv(text,filename){
+  const rows=parseCsv(text);
+  if(rows.length<2){toast('El archivo parece vacío.','error');return;}
+  state.sorteoRaw=rowsToObjects(rows);
+  state.sorteoHeaders=rows[0].map(h=>h.trim());
+  state.sorteoMapping=autoMap(state.sorteoHeaders,SORTEO_FIELDS);
+  state.sorteoReady=false;
+  showStatus('#sorteo-status',`✓ ${state.sorteoRaw.length} participantes cargados${filename?' — '+esc(filename):''}<br>Revisa el mapeo y confirma.`,'ok');
+  renderMappingGrid('#sorteo-mapping-grid',state.sorteoHeaders,SORTEO_FIELDS,state.sorteoMapping);
+  $('#sorteo-mapping-wrap').style.display='block';
+  checkRunReady();
+}
+function handleBanCsv(text,filename){
+  const rows=parseCsv(text);
+  if(rows.length<2){toast('El archivo de baneados parece vacío.','error');return;}
+  state.banRaw=rowsToObjects(rows);
+  state.banHeaders=rows[0].map(h=>h.trim());
+  state.banMapping=autoMap(state.banHeaders,BAN_FIELDS);
+  state.banReady=false;
+  showStatus('#ban-status',`✓ ${state.banRaw.length} baneados cargados${filename?' — '+esc(filename):''}<br>Revisa el mapeo y confirma.`,'ok');
+  renderMappingGrid('#ban-mapping-grid',state.banHeaders,BAN_FIELDS,state.banMapping);
+  $('#ban-mapping-wrap').style.display='block';
+  checkRunReady();
+}
+
+/* ══════════════════════════════════════════
+   LOOKUPS
+══════════════════════════════════════════ */
+function buildBanLookup(){
+  const m=state.banMapping;
+  const get=(row,k)=>String(row[m[k]??'']??'').trim();
+  const byDoc=new Map(),byEmail=new Map(),byPhone=new Map(),byAddr=new Map();
+  for(const row of state.banRaw){
+    const doc=normDoc(get(row,'document')),email=normEmail(get(row,'email')),
+          phone=normPhone(get(row,'phone')),addr=normAddress(get(row,'street'),get(row,'number')),
+          reason=get(row,'reason')||'Baneado';
+    const e={reason};
+    if(doc.length>=4){if(!byDoc.has(doc))byDoc.set(doc,[]);byDoc.get(doc).push(e);}
+    if(email){if(!byEmail.has(email))byEmail.set(email,[]);byEmail.get(email).push(e);}
+    if(phone.length>=6){if(!byPhone.has(phone))byPhone.set(phone,[]);byPhone.get(phone).push(e);}
+    if(addr.length>=6){if(!byAddr.has(addr))byAddr.set(addr,[]);byAddr.get(addr).push(e);}
+  }
+  return{byDoc,byEmail,byPhone,byAddr};
+}
+function buildSorteoRows(){
+  const m=state.sorteoMapping;
+  const get=(row,k)=>String(row[m[k]??'']??'').trim();
+  const rows=[];
+  state.sorteoRaw.forEach((row,idx)=>{
+    const email=get(row,'email');
+    const doc=get(row,'document');
+    // Skip completely empty rows (no email AND no document)
+    if(!email&&!doc) return;
+    rows.push({
+      _idx:idx,
+      firstName:get(row,'firstName'),lastName:get(row,'lastName'),
+      document:doc,email,phone:get(row,'phone'),
+      street:get(row,'street'),number:get(row,'number'),
+      size:normSizeDisplay(get(row,'size')),
+      styleColor:get(row,'styleColor'),timestamp:get(row,'timestamp'),
+    });
+  });
+  return rows;
+}
+
+/* ══════════════════════════════════════════
+   VERIFICATION + STOCK ASSIGNMENT
+══════════════════════════════════════════ */
+function runVerification(){
+  const sorteoRows=buildSorteoRows(); setProgress(15);
+  const banLookup=buildBanLookup(); setProgress(30);
+  const enabledSigs=SIGNAL_DEFS.filter(s=>state.enabledSigs.has(s.key));
+
+  /* ── Step 1: duplicates ── */
+  const uf=new UF();
+  for(const r of sorteoRows) uf.find(r._idx);
+  const sigMaps={};
+  for(const sig of enabledSigs) sigMaps[sig.key]=new Map();
+  for(const r of sorteoRows){
+    for(const sig of enabledSigs){
+      const v=sig.fn(r);if(!v)continue;
+      if(!sigMaps[sig.key].has(v))sigMaps[sig.key].set(v,[]);
+      sigMaps[sig.key].get(v).push(r._idx);
+    }
+  }
+  for(const sig of enabledSigs)
+    for(const ids of sigMaps[sig.key].values())
+      if(ids.length>1) for(let i=1;i<ids.length;i++) uf.union(ids[0],ids[i]);
+
+  setProgress(50);
+  const clusters=new Map();
+  for(const r of sorteoRows){const root=uf.find(r._idx);if(!clusters.has(root))clusters.set(root,[]);clusters.get(root).push(r);}
+
+  const keepSet=new Set(),dupRejectMap=new Map();
+  for(const members of clusters.values()){
+    if(members.length===1){keepSet.add(members[0]._idx);continue;}
+    const matchedSigs=[];
+    for(const sig of enabledSigs){
+      const vals=members.map(r=>sig.fn(r)).filter(Boolean);
+      if(vals.length>new Set(vals).size) matchedSigs.push(sig.label);
+    }
+    // Prefer member with size; then apply oldest/newest within that pool
+    const withSize=members.filter(m=>m.size&&m.size.trim());
+    const pool=withSize.length?withSize:members;
+    const sorted=[...pool].sort((a,b)=>a._idx-b._idx);
+    const keep=state.keepPref==='oldest'?sorted[0]:sorted[sorted.length-1];
+    keepSet.add(keep._idx);
+    for(const m of members) if(m._idx!==keep._idx) dupRejectMap.set(m._idx,{signals:matchedSigs});
+  }
+
+  setProgress(65);
+
+  /* ── Step 2: ban + terms ── */
+  const preApproved=[],rejected=[];
+  for(const r of sorteoRows){
+    const reasons=[];
+    if(state.enabledSigs.has('doc')){const v=normDoc(r.document);const h=v.length>=4?banLookup.byDoc.get(v):null;if(h?.length)reasons.push({type:'ban',field:'Documento',reason:h[0].reason});}
+    if(state.enabledSigs.has('email')){const v=normEmail(r.email);const h=v?banLookup.byEmail.get(v):null;if(h?.length)reasons.push({type:'ban',field:'Email',reason:h[0].reason});}
+    if(state.enabledSigs.has('phone')){const v=normPhone(r.phone);const h=v.length>=6?banLookup.byPhone.get(v):null;if(h?.length)reasons.push({type:'ban',field:'Teléfono',reason:h[0].reason});}
+    if(state.enabledSigs.has('addr')){const v=normAddress(r.street,r.number);const h=v.length>=6?banLookup.byAddr.get(v):null;if(h?.length)reasons.push({type:'ban',field:'Dirección',reason:h[0].reason});}
+    const termHits=matchTerms(r.email,state.blocklist);
+    if(termHits.length) reasons.push({type:'term',field:'Email',reason:'Término: '+termHits.map(t=>t.value).join(', ')});
+    if(dupRejectMap.has(r._idx)){const {signals}=dupRejectMap.get(r._idx);reasons.push({type:'dup',field:'Duplicado',reason:'Coincide en: '+signals.join(', ')});}
+    if(reasons.length) rejected.push({...r,rejectReasons:reasons});
+    else preApproved.push({...r});
+  }
+
+  setProgress(80);
+
+  /* ── Step 3: stock cap + size assignment ── */
+  const hasStock=state.stockSizes.length>0;
+  let approved=[];
+
+  if(hasStock){
+    /*
+      SELECTION LOGIC:
+      1. Build slots per size: stock × 1.30, extra 30% to highest-stock sizes.
+      2. Per slot: fill first with preApproved who requested that exact size (shuffled).
+         If requests > slot capacity → excess go to "unassigned" pool for later.
+         If requests < slot capacity → remaining spots filled from random pool at end.
+      3. Participants not yet placed (no matching size, or size oversubscribed) go into
+         a random pool used to fill empty slots.
+      4. Any preApproved still not selected after all slots are full → rejected (stock).
+      Total approved = exactly stockTotal130().
+    */
+    const cap=stockTotal130();
+
+    // ── Build slot map (real stock + 30% extra to highest-stock sizes) ──
+    const totalReal=state.stockSizes.reduce((a,s)=>a+s.qty,0);
+    const totalExtra=cap-totalReal;
+    const sortedSizes=[...state.stockSizes].sort((a,b)=>b.qty-a.qty);
+    const slots=sortedSizes.map(s=>({size:s.size,cap:s.qty,remaining:s.qty}));
+    let leftover=totalExtra;
+    for(let i=0;i<slots.length&&leftover>0;i++){
+      const extra=i===slots.length-1?leftover:Math.round(totalExtra*(slots[i].cap/totalReal));
+      const actual=Math.min(extra,leftover);
+      slots[i].cap+=actual; slots[i].remaining+=actual; leftover-=actual;
+    }
+    if(leftover>0){slots[0].cap+=leftover;slots[0].remaining+=leftover;}
+
+    // Map by normalized key
+    const slotMap={};
+    for(const s of slots) slotMap[normSizeKey(s.size)]={display:s.size,cap:s.cap,remaining:s.cap,selected:[]};
+
+    // ── Group preApproved by their requested size ──
+    const bySize={};   // normKey → [participant]
+    const noSizePool=[]; // no declared size
+    for(const r of shuffle([...preApproved])){
+      const key=normSizeKey(r.size);
+      if(key&&slotMap[key]){
+        if(!bySize[key]) bySize[key]=[];
+        bySize[key].push(r);
+      } else {
+        noSizePool.push(r);
+      }
+    }
+
+    // ── Pass 1: fill each slot with matching-size participants ──
+    const overflowPool=[]; // requested a size but slot was full
+    const requestCounts={};
+    for(const key of Object.keys(slotMap)){
+      const requests=bySize[key]||[];
+      requestCounts[key]=requests.length;
+      for(const r of requests){
+        if(slotMap[key].remaining>0){
+          r.assignedSize=slotMap[key].display;
+          r.assignedByRandom=false;
+          slotMap[key].selected.push(r);
+          slotMap[key].remaining--;
+        } else {
+          overflowPool.push(r); // their size is full
+        }
+      }
+    }
+
+    // ── Pass 2: fill remaining slots from random pool ──
+    // random pool = no-size participants + overflow (size was full)
+    const randomPool=shuffle([...noSizePool,...overflowPool]);
+    let ri=0;
+    for(const slot of Object.values(slotMap)){
+      while(slot.remaining>0&&ri<randomPool.length){
+        const r=randomPool[ri++];
+        r.assignedSize=slot.display;
+        r.assignedByRandom=true;
+        slot.selected.push(r);
+        slot.remaining--;
+      }
+    }
+
+    // ── Collect approved (all slot selections) and rejected (leftover) ──
+    const selectedSet=new Set();
+    approved=[];
+    for(const slot of Object.values(slotMap)){
+      for(const r of slot.selected){
+        if(!selectedSet.has(r._idx)){selectedSet.add(r._idx);approved.push(r);}
+      }
+    }
+    // remaining random pool members not placed → rejected
+    for(;ri<randomPool.length;ri++)
+      rejected.push({...randomPool[ri],rejectReasons:[{type:'stock',field:'Stock',reason:'Excede cupos disponibles (stock × 1,30)'}]});
+    // preApproved who had a size not in stock at all → also rejected
+    for(const r of preApproved){
+      if(!selectedSet.has(r._idx)&&!randomPool.includes(r))
+        rejected.push({...r,rejectReasons:[{type:'stock',field:'Stock',reason:'Talla no disponible en stock y sin cupo al azar'}]});
+    }
+
+    // ── Stats for resumen ──
+    const sizesWithNoRequests=slots.filter(s=>!(requestCounts[normSizeKey(s.size)]>0)).map(s=>s.size);
+    state._sizesWithNoRequests=sizesWithNoRequests;
+    state._slotStats=slots.map(s=>{
+      const key=normSizeKey(s.size);
+      const req=requestCounts[key]||0;
+      const placed=slotMap[key].selected.filter(r=>!r.assignedByRandom).length;
+      const random=slotMap[key].selected.filter(r=>r.assignedByRandom).length;
+      return{size:s.size,cap:s.cap,requested:req,placedBySize:placed,placedByRandom:random};
+    });
+  } else {
+    // No stock configured: all preApproved are approved, no size assignment
+    approved=preApproved.map(r=>({...r,assignedSize:undefined,assignedByRandom:false}));
+  }
+
+  setProgress(95);
+  state.results={approved,rejected};
+  if(!hasStock){state._sizesWithNoRequests=[];state._slotStats=[];}
+  state.shuffledApproved=shuffle([...approved]);
+  setProgress(100);
+  setTimeout(()=>{const pw=$('#progress-wrap');if(pw)pw.style.display='none';setProgress(0);},500);
+  renderAll();
+  switchTab('resumen');
+  toast(`Listo: ${approved.length} aprobados, ${rejected.length} rechazados.`,'success');
+}
+
+/* ══════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════ */
+function renderSignals(){
+  const el=$('#signals-row');if(!el)return;
+  const icons={doc:'🪪',email:'✉️',phone:'📱',addr:'📍'};
+  el.innerHTML=SIGNAL_DEFS.map(sig=>`<label class="switch-row"><span class="switch"><input type="checkbox" data-action="toggle-sig" data-sig="${sig.key}" ${state.enabledSigs.has(sig.key)?'checked':''}><span class="slider"></span></span>${icons[sig.key]} ${sig.label}</label>`).join('');
+}
+
+function renderResumen(){
+  const el=$('#resumen-content');if(!el)return;
+  if(!state.results){el.innerHTML='<div class="empty">Ejecuta la verificación primero.</div>';return;}
+  const {approved,rejected}=state.results;
+  const byBan=rejected.filter(r=>r.rejectReasons.some(x=>x.type==='ban')).length;
+  const byDup=rejected.filter(r=>r.rejectReasons.some(x=>x.type==='dup')).length;
+  const byTerm=rejected.filter(r=>r.rejectReasons.some(x=>x.type==='term')).length;
+  const byStock=rejected.filter(r=>r.rejectReasons.some(x=>x.type==='stock')).length;
+  const byRandom=approved.filter(r=>r.assignedByRandom).length;
+  const cap=state.stockSizes.length?stockTotal130():null;
+  const noReqSizes=state._sizesWithNoRequests||[];
+  const slotStats=state._slotStats||[];
+  el.innerHTML=`<div class="panel"><h2 class="panel-title">Resultado de la verificación</h2>
+    <p class="panel-desc">Total procesados: <strong>${approved.length+rejected.length}</strong>${cap?` · Cupos stock ×1,30: <strong>${cap}</strong>`:''}</p>
+    <div class="summary-grid">
+      <div class="stat-card card-green"><div class="val">${approved.length}</div><div class="lbl">Aprobados</div></div>
+      <div class="stat-card card-red"><div class="val">${rejected.length}</div><div class="lbl">Rechazados</div></div>
+      <div class="stat-card card-red"><div class="val">${byBan}</div><div class="lbl">Baneados</div></div>
+      <div class="stat-card card-yellow"><div class="val">${byDup}</div><div class="lbl">Duplicados</div></div>
+      <div class="stat-card card-orange"><div class="val">${byTerm}</div><div class="lbl">Términos</div></div>
+      ${byRandom?`<div class="stat-card card-yellow"><div class="val">${byRandom}</div><div class="lbl">Asign. al azar</div></div>`:''}
+      ${byStock?`<div class="stat-card card-red"><div class="val">${byStock}</div><div class="lbl">Excede stock</div></div>`:''}
+    </div>
+    ${approved.length?`<div class="callout callout-green">✅ <strong>${approved.length} participantes aprobados</strong>${cap?' de '+cap+' cupos disponibles':''}. Exporta desde la pestaña Aprobados.</div>`:''}
+    ${byBan?`<div class="callout">⛔ <strong>${byBan}</strong> coinciden con la base de baneados.</div>`:''}
+    ${byDup?`<div class="callout">🔁 <strong>${byDup}</strong> son duplicados internos.</div>`:''}
+    ${byTerm?`<div class="callout">🚩 <strong>${byTerm}</strong> tienen emails con términos sospechosos.</div>`:''}
+    ${byRandom?`<div class="callout callout-green">🎲 <strong>${byRandom}</strong> participante(s) no declararon talla y se les asignó una al azar del pool disponible.</div>`:''}
+    ${byStock?`<div class="callout">📦 <strong>${byStock}</strong> exceden el cupo de stock ×1,30.</div>`:''}
+    ${noReqSizes.length?`<div class="callout" style="background:#FFF0E8;border-color:#ffd0b0;color:#7A3000;">⚠️ <strong>${noReqSizes.length} talla(s) sin solicitudes</strong>: <strong>${noReqSizes.map(s=>'<span class="mono">'+s+'</span>').join(', ')}</strong>. Se les asignaron clientes al azar del pool disponible.</div>`:''}
+    ${slotStats.length?`<div style="margin-top:14px;overflow-x:auto;"><table class="data" style="max-width:520px;"><thead><tr><th>Talla</th><th class="num">Cupos ×1,30</th><th class="num">Solicitaron</th><th class="num">Por talla</th><th class="num">Al azar</th></tr></thead><tbody>${slotStats.map(s=>`<tr ${s.requested===0?'style="background:#FFF8E7;"':''}><td class="mono">${esc(s.size)}</td><td class="num">${s.cap}</td><td class="num">${s.requested}</td><td class="num">${s.placedBySize}</td><td class="num">${s.placedByRandom||'—'}</td></tr>`).join('')}</tbody><tfoot><tr style="border-top:2px solid var(--black);"><td><strong>Total</strong></td><td class="num"><strong>${slotStats.reduce((a,s)=>a+s.cap,0)}</strong></td><td class="num"><strong>${slotStats.reduce((a,s)=>a+s.requested,0)}</strong></td><td class="num"><strong>${slotStats.reduce((a,s)=>a+s.placedBySize,0)}</strong></td><td class="num"><strong>${slotStats.reduce((a,s)=>a+(s.placedByRandom||0),0)}</strong></td></tr></tfoot></table></div>`:''}
+  </div>`;
+}
+
+function renderAprobadosFilters(){
+  const fEl=$('#aprobados-filters');if(!fEl)return;
+  if(fEl.querySelector('#ap-search'))return;
+  fEl.innerHTML=`<input type="text" id="ap-search" placeholder="Buscar nombre, email o RUT..." style="max-width:320px;width:100%;"><button class="btn btn-ghost btn-sm" id="btn-reshuffle">↺ Reordenar</button>`;
+  fEl.querySelector('#ap-search').addEventListener('input',renderAprobadosTable);
+  fEl.querySelector('#btn-reshuffle').addEventListener('click',()=>{
+    if(state.results?.approved) state.shuffledApproved=shuffle([...state.results.approved]);
+    renderAprobadosTable();
+  });
+}
+
+function renderAprobadosTable(){
+  const el=$('#aprobados-content');if(!el||!state.results)return;
+  const {approved}=state.results;
+  const search=($('#ap-search')?.value||'').toLowerCase();
+  const hasTs=approved.some(r=>r.timestamp);
+  const hasSz=approved.some(r=>r.size);
+  const hasAssigned=approved.some(r=>r.assignedSize!==undefined);
+  if(!state.shuffledApproved.length) state.shuffledApproved=shuffle([...approved]);
+  const filtered=search
+    ?state.shuffledApproved.filter(r=>r.email.toLowerCase().includes(search)||((r.firstName+' '+r.lastName).toLowerCase()).includes(search)||r.document.toLowerCase().includes(search))
+    :state.shuffledApproved;
+  el.innerHTML=`<p style="font-size:12px;color:var(--grey-500);margin-bottom:8px;">${filtered.length} de ${approved.length} · orden aleatorio</p>
+    <div style="overflow-x:auto;"><table class="data"><thead><tr><th>#</th><th>Nombre</th><th>RUT/DNI</th><th>Email</th><th>Teléfono</th><th>Dirección</th>${hasSz?'<th>Talla solicitada</th>':''}${hasAssigned?'<th>Talla asignada</th>':''}${hasTs?'<th>Fecha y hora</th>':''}</tr></thead><tbody>`+
+    filtered.map((r,i)=>`<tr class="row-ok"><td class="num mono">${i+1}</td><td>${esc((r.firstName+' '+r.lastName).trim())}</td><td class="mono">${esc(r.document)}</td><td class="mono">${esc(r.email)}</td><td class="mono">${esc(r.phone)}</td><td>${esc(r.street+(r.number?' '+r.number:''))}</td>${hasSz?`<td class="mono">${esc(r.size||'—')}</td>`:''} ${hasAssigned?`<td class="mono" style="white-space:nowrap;"><strong>${esc(r.assignedSize||'—')}</strong>${r.assignedByRandom?' <span class="pill pill-dim" style="font-size:10px;padding:2px 6px;">azar</span>':''}</td>`:''} ${hasTs?`<td class="mono" style="white-space:nowrap;">${esc(r.timestamp)}</td>`:''}</tr>`).join('')+
+    '</tbody></table></div>';
+}
+
+function renderAprobados(){
+  const el=$('#aprobados-content'),fEl=$('#aprobados-filters');if(!el)return;
+  if(!state.results){el.innerHTML='<div class="empty">Ejecuta la verificación primero.</div>';if(fEl)fEl.innerHTML='';return;}
+  const {approved}=state.results;
+  if(!approved.length){el.innerHTML='<div class="empty">No hay aprobados.</div>';if(fEl)fEl.innerHTML='';return;}
+  renderAprobadosFilters();
+  renderAprobadosTable();
+}
+
+function renderRechazadosFilters(){
+  const fEl=$('#rechazados-filters');if(!fEl)return;
+  if(fEl.querySelector('#rej-search'))return;
+  fEl.innerHTML=`<input type="text" id="rej-search" placeholder="Buscar nombre, email o RUT..." style="max-width:280px;width:100%;">
+    <label class="check"><input type="checkbox" id="filt-ban"> Baneados</label>
+    <label class="check"><input type="checkbox" id="filt-dup"> Duplicados</label>
+    <label class="check"><input type="checkbox" id="filt-term"> Términos</label>
+    <label class="check"><input type="checkbox" id="filt-stock"> Excede stock</label>`;
+  fEl.querySelector('#rej-search').addEventListener('input',renderRechazadosTable);
+  fEl.querySelector('#filt-ban').addEventListener('change',renderRechazadosTable);
+  fEl.querySelector('#filt-dup').addEventListener('change',renderRechazadosTable);
+  fEl.querySelector('#filt-term').addEventListener('change',renderRechazadosTable);
+  fEl.querySelector('#filt-stock').addEventListener('change',renderRechazadosTable);
+}
+
+function renderRechazadosTable(){
+  const el=$('#rechazados-content');if(!el||!state.results)return;
+  const {rejected}=state.results;
+  const search=($('#rej-search')?.value||'').toLowerCase();
+  const active=[];
+  if($('#filt-ban')?.checked) active.push('ban');
+  if($('#filt-dup')?.checked) active.push('dup');
+  if($('#filt-term')?.checked) active.push('term');
+  if($('#filt-stock')?.checked) active.push('stock');
+  const filtered=rejected.filter(r=>{
+    if(search&&!(r.email.toLowerCase().includes(search)||((r.firstName+' '+r.lastName).toLowerCase()).includes(search)||r.document.toLowerCase().includes(search))) return false;
+    if(active.length&&!active.some(t=>r.rejectReasons.some(x=>x.type===t))) return false;
+    return true;
+  });
+  el.innerHTML=`<p style="font-size:12px;color:var(--grey-500);margin-bottom:8px;">${filtered.length} de ${rejected.length}</p>
+    <div style="overflow-x:auto;"><table class="data"><thead><tr><th>#</th><th>Nombre</th><th>RUT/DNI</th><th>Email</th><th>Teléfono</th><th>Motivo</th></tr></thead><tbody>`+
+    filtered.map((r,i)=>`<tr class="row-reject"><td class="num mono">${i+1}</td><td>${esc((r.firstName+' '+r.lastName).trim())}</td><td class="mono">${esc(r.document)}</td><td class="mono">${esc(r.email)}</td><td class="mono">${esc(r.phone)}</td><td style="line-height:1.9;">${r.rejectReasons.map(x=>{const cls=x.type==='ban'?'pill-ban':x.type==='dup'?'pill-dup':x.type==='stock'?'pill-dim':'pill-term';const lbl=x.type==='ban'?'⛔ Ban':x.type==='dup'?'🔁 Dup':x.type==='stock'?'📦 Stock':'🚩 Term';return `<span class="pill ${cls}">${lbl}</span> <span class="ban-reason"><b>${esc(x.field)}</b>${x.reason?' — '+esc(x.reason):''}</span>`;}).join('<br>')}</td></tr>`).join('')+
+    '</tbody></table></div>';
+}
+
+function renderRechazados(){
+  const el=$('#rechazados-content'),fEl=$('#rechazados-filters');if(!el)return;
+  if(!state.results){el.innerHTML='<div class="empty">Ejecuta la verificación primero.</div>';if(fEl)fEl.innerHTML='';return;}
+  const {rejected}=state.results;
+  if(!rejected.length){el.innerHTML='<div class="empty">✅ No hubo rechazados.</div>';if(fEl)fEl.innerHTML='';return;}
+  renderRechazadosFilters();
+  renderRechazadosTable();
+}
+
+function updateTabCounts(){
+  if(!state.results)return;
+  const ca=$('#count-aprobados');if(ca)ca.textContent=` (${state.results.approved.length})`;
+  const cr=$('#count-rechazados');if(cr)cr.textContent=` (${state.results.rejected.length})`;
+  const cs=$('#count-resumen');if(cs)cs.textContent=' ●';
+}
+
+function renderAll(){
+  const af=$('#aprobados-filters');if(af)af.innerHTML='';
+  const rf=$('#rechazados-filters');if(rf)rf.innerHTML='';
+  state.shuffledApproved=[];
+  renderResumen();renderAprobados();renderRechazados();updateTabCounts();
+}
+
+/* ══════════════════════════════════════════
+   TERMS
+══════════════════════════════════════════ */
+function renderTermsList(){
+  const el=$('#terms-list');if(!el)return;
+  if(!state.blocklist.length){el.innerHTML='<p style="color:var(--grey-500);font-size:13px;">Sin términos. Agrega uno arriba.</p>';return;}
+  el.innerHTML=`<table class="data"><thead><tr><th>Tipo</th><th>Valor</th><th>Nota</th><th></th></tr></thead><tbody>`+
+    state.blocklist.map(t=>`<tr>
+      <td><span class="pill ${t.type==='email'?'pill-info':'pill-dim'}">${t.type==='email'?'Email exacto':'Término'}</span></td>
+      <td class="mono">${esc(t.value)}</td><td>${esc(t.note||'')}</td>
+      <td><button class="btn btn-ghost btn-danger btn-sm" data-action="term-remove" data-tid="${esc(t.id)}">Eliminar</button></td>
+    </tr>`).join('')+'</tbody></table>';
+}
+function addTerm(){
+  const type=$('#term-type').value,value=$('#term-value').value.trim(),note=$('#term-note').value.trim();
+  if(!value){toast('El valor no puede estar vacío.','error');return;}
+  if(type==='email'&&!value.includes('@')){toast('El email debe incluir @.','error');return;}
+  state.blocklist.push({id:'t'+Date.now(),type,value,note});
+  saveBL();$('#term-value').value='';$('#term-note').value='';
+  renderTermsList();toast('Término agregado.','success');
+}
+function removeTerm(id){state.blocklist=state.blocklist.filter(t=>t.id!==id);saveBL();renderTermsList();}
+
+/* ══════════════════════════════════════════
+   EXPORTS
+══════════════════════════════════════════ */
+function exportAprobados(){
+  if(!state.results?.approved.length){toast('Sin aprobados.','error');return;}
+  const src=state.shuffledApproved.length?state.shuffledApproved:shuffle([...state.results.approved]);
+  const hasTs=src.some(r=>r.timestamp);
+  const hasSz=src.some(r=>r.size);
+  const hasAssigned=src.some(r=>r.assignedSize!==undefined);
+  const h=['#','Nombre','RUT_DNI','Email','Telefono','Calle','Numero'];
+  if(hasSz) h.push('Talla_Solicitada');
+  if(hasAssigned) h.push('Talla_Asignada');
+  h.push('StyleColor');
+  if(hasTs) h.push('Fecha_Hora');
+  const rows=src.map((r,i)=>{
+    const row=[i+1,(r.firstName+' '+r.lastName).trim(),r.document,r.email,r.phone,r.street,r.number];
+    if(hasSz) row.push(r.size||'');
+    if(hasAssigned) row.push(r.assignedSize||'');
+    row.push(r.styleColor||'');
+    if(hasTs) row.push(r.timestamp||'');
+    return row;
+  });
+  downloadText('snkrs-aprobados-'+new Date().toISOString().slice(0,10)+'.csv',toCsvStr(h,rows));
+  toast('CSV exportado.','success');
+}
+function copyAprobadosEmails(){
+  if(!state.results?.approved.length){toast('Sin aprobados.','error');return;}
+  const src=state.shuffledApproved.length?state.shuffledApproved:state.results.approved;
+  navigator.clipboard.writeText(src.map(r=>r.email).join('\n'))
+    .then(()=>toast(src.length+' emails copiados.','success'))
+    .catch(()=>toast('No se pudo copiar.','error'));
+}
+function exportRechazados(){
+  if(!state.results?.rejected.length){toast('Sin rechazados.','error');return;}
+  const h=['#','Nombre','RUT_DNI','Email','Telefono','Motivo'];
+  const rows=state.results.rejected.map((r,i)=>[i+1,(r.firstName+' '+r.lastName).trim(),r.document,r.email,r.phone,r.rejectReasons.map(x=>x.type.toUpperCase()+': '+x.field+(x.reason?' - '+x.reason:'')).join(' | ')]);
+  downloadText('snkrs-rechazados-'+new Date().toISOString().slice(0,10)+'.csv',toCsvStr(h,rows));
+  toast('CSV exportado.','success');
+}
+
+/* ══════════════════════════════════════════
+   TAB SWITCHING
+══════════════════════════════════════════ */
+function switchTab(name){
+  $all('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));
+  $all('.tab-panel').forEach(p=>p.classList.toggle('active',p.dataset.tab===name));
+}
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded',function(){
+  $all('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>switchTab(btn.dataset.tab)));
+
+  ['sorteo','ban'].forEach(name=>{
+    const dz=$('#'+name+'-dropzone');if(!dz)return;
+    const handler=name==='sorteo'?handleSorteoCsv:handleBanCsv;
+    dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover');});
+    dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+    dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');const f=e.dataTransfer.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>handler(ev.target.result,f.name);r.readAsText(f,'utf-8');});
+    dz.addEventListener('click',()=>{const inp=dz.querySelector('input[type=file]');if(inp)inp.click();});
+  });
+
+  renderSignals();
+  renderTermsList();
+  renderStockRows();
+  checkRunReady();
+});
+
+/* ══════════════════════════════════════════
+   EVENT DELEGATION
+══════════════════════════════════════════ */
+document.addEventListener('click',function(e){
+  const btn=e.target.closest('[data-action]');if(!btn)return;
+  const a=btn.dataset.action;
+
+  if(a==='stock-add'){
+    const sz=$('#new-size-input')?.value.trim();
+    const qty=parseInt($('#new-stock-input')?.value||'0');
+    if(!sz){toast('Ingresa el nombre de la talla.','error');return;}
+    if(!qty||qty<1){toast('Ingresa un stock válido (>0).','error');return;}
+    const norm=normSizeDisplay(sz)||sz;
+    if(state.stockSizes.find(s=>normSizeKey(s.size)===normSizeKey(norm))){toast('Esa talla ya existe.','error');return;}
+    state.stockSizes.push({size:norm,qty});
+    saveStock();
+    $('#new-size-input').value='';$('#new-stock-input').value='';
+    renderStockRows();return;
+  }
+  if(a==='stock-remove'){
+    state.stockSizes.splice(parseInt(btn.dataset.si),1);
+    saveStock();renderStockRows();return;
+  }
+  if(a==='stock-export'){
+    if(!state.stockSizes.length){toast('Sin stock configurado.','error');return;}
+    downloadText('snkrs-stock-'+new Date().toISOString().slice(0,10)+'.csv',
+      toCsvStr(['talla','stock'],state.stockSizes.map(s=>[s.size,s.qty])));
+    toast('CSV de stock exportado.','success');return;
+  }
+  if(a==='stock-import-btn'){$('#stock-file-input').click();return;}
+  if(a==='confirm-sorteo-mapping'){
+    const mapping=readMapping('#sorteo-mapping-wrap');
+    const miss=SORTEO_FIELDS.filter(f=>f.required&&!mapping[f.key]);
+    if(miss.length){toast('Faltan: '+miss.map(f=>f.label).join(', '),'error');return;}
+    state.sorteoMapping=mapping;state.sorteoReady=true;
+    showStatus('#sorteo-status',`✅ ${state.sorteoRaw.length} participantes confirmados.`,'ok');
+    checkRunReady();toast('Mapeo del sorteo confirmado.','success');return;
+  }
+  if(a==='confirm-ban-mapping'){
+    const mapping=readMapping('#ban-mapping-wrap');
+    const miss=BAN_FIELDS.filter(f=>f.required&&!mapping[f.key]);
+    if(miss.length){toast('Faltan: '+miss.map(f=>f.label).join(', '),'error');return;}
+    state.banMapping=mapping;state.banReady=true;
+    showStatus('#ban-status',`✅ ${state.banRaw.length} baneados confirmados.`,'ok');
+    checkRunReady();toast('Mapeo de baneados confirmado.','success');return;
+  }
+  if(a==='run-verification'){
+    if(!state.sorteoReady||!state.banReady){toast('Confirma el mapeo de ambas fuentes.','error');return;}
+    const pw=$('#progress-wrap');if(pw)pw.style.display='block';
+    setProgress(5);setTimeout(runVerification,50);return;
+  }
+  if(a==='toggle-sig'){
+    const sig=btn.dataset.sig;
+    if(btn.checked) state.enabledSigs.add(sig); else state.enabledSigs.delete(sig);
+    if(state.enabledSigs.size===0){state.enabledSigs.add(sig);btn.checked=true;toast('Al menos una señal debe estar activa.','error');}
+    return;
+  }
+  if(a==='terms-add'){addTerm();return;}
+  if(a==='term-remove'){removeTerm(btn.dataset.tid);return;}
+  if(a==='terms-export'){
+    if(!state.blocklist.length){toast('Sin términos.','error');return;}
+    downloadText('snkrs-terminos-'+new Date().toISOString().slice(0,10)+'.csv',
+      toCsvStr(['tipo','valor','nota'],state.blocklist.map(t=>[t.type,t.value,t.note||''])));
+    toast('CSV de términos exportado.','success');return;
+  }
+  if(a==='terms-import-btn'){$('#terms-file-input').click();return;}
+  if(a==='aprobados-export'){exportAprobados();return;}
+  if(a==='aprobados-copy'){copyAprobadosEmails();return;}
+  if(a==='rechazados-export'){exportRechazados();return;}
+});
+
+document.addEventListener('change',function(e){
+  if(e.target.name==='keep-pref'){state.keepPref=e.target.value;return;}
+  if(e.target.id==='sorteo-file'){
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();r.onload=ev=>handleSorteoCsv(ev.target.result,f.name);r.readAsText(f,'utf-8');e.target.value='';return;
+  }
+  if(e.target.id==='ban-file'){
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();r.onload=ev=>handleBanCsv(ev.target.result,f.name);r.readAsText(f,'utf-8');e.target.value='';return;
+  }
+  if(e.target.id==='stock-file-input'){
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();r.onload=ev=>handleStockCsv(ev.target.result,f.name);r.readAsText(f,'utf-8');e.target.value='';return;
+  }
+  if(e.target.id==='terms-file-input'){
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      try{
+        const rows=parseCsv(ev.target.result);if(!rows.length)throw new Error('vacío');
+        const hdrs=rows[0].map(h=>h.trim().toLowerCase());
+        const idxTipo=hdrs.findIndex(h=>h.includes('tipo')||h.includes('type'));
+        const idxValor=hdrs.findIndex(h=>h.includes('valor')||h.includes('value')||h.includes('email')||h.includes('termino')||h.includes('term'));
+        const idxNota=hdrs.findIndex(h=>h.includes('nota')||h.includes('note'));
+        const hasHeaders=idxValor>=0;
+        const dataRows=hasHeaders?rows.slice(1):rows;
+        const existingVals=new Set(state.blocklist.map(t=>t.value.toLowerCase()));
+        let added=0;
+        for(const row of dataRows){
+          if(!row.some(c=>c.trim()))continue;
+          let tipo,valor,nota='';
+          if(hasHeaders){
+            valor=(idxValor>=0?row[idxValor]:'').trim();
+            tipo=idxTipo>=0?(row[idxTipo]||'').trim().toLowerCase():'';
+            nota=idxNota>=0?(row[idxNota]||'').trim():'';
+          } else {valor=(row[0]||'').trim();tipo='';nota='';}
+          if(!valor)continue;
+          if(!tipo||(!tipo.includes('email')&&!tipo.includes('term'))){
+            tipo=valor.includes('@')&&!valor.startsWith('@')?'email':'termino';
+          } else {tipo=tipo.includes('email')?'email':'termino';}
+          if(existingVals.has(valor.toLowerCase()))continue;
+          state.blocklist.push({id:'t'+Date.now()+added,type:tipo,value:valor,note:nota});
+          existingVals.add(valor.toLowerCase());added++;
+        }
+        saveBL();renderTermsList();toast(added+' término(s) importado(s).','success');
+      }catch(err){toast('No se pudo leer el CSV: '+err.message,'error');}
+    };
+    r.readAsText(f,'utf-8');e.target.value='';return;
+  }
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.target.id==='term-value'&&e.key==='Enter') addTerm();
+  if((e.target.id==='new-size-input'||e.target.id==='new-stock-input')&&e.key==='Enter') $('[data-action="stock-add"]')?.click();
+});
+document.addEventListener('keyup',e=>{
+  if(e.target.id==='ap-search') renderAprobadosTable();
+  if(e.target.id==='rej-search') renderRechazadosTable();
+});
+</script>
+</body>
+</html>
